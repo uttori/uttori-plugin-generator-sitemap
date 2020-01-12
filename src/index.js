@@ -1,20 +1,34 @@
 const debug = require('debug')('Uttori.Plugin.Generator.Sitemap');
-const R = require('ramda');
 const { FileUtility } = require('uttori-utilities');
 
+/**
+ * Uttori Sitemap Generator
+ * @example <caption>SitemapGenerator</caption>
+ * const sitemap = SitemapGenerator.generate({ ... });
+ * @class
+ */
 class SitemapGenerator {
-  static register(context) {
-    if (!context || !context.hooks || typeof context.hooks.on !== 'function') {
-      throw new Error("Missing event dispatcher in 'context.hooks.on(event, callback)' format.");
-    }
-    context.hooks.on('document-delete', SitemapGenerator.callback); // UttoriWiki
-    context.hooks.on('document-save', SitemapGenerator.callback); // UttoriWiki
-    context.hooks.on('validate-config', SitemapGenerator.validateConfig); // UttoriWiki
+  /**
+   * The configuration key for plugin to look for in the provided configuration.
+   * @return {String} The configuration key.
+   * @example <caption>SitemapGenerator.configKey</caption>
+   * const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
+   * @static
+   */
+  static get configKey() {
+    return 'uttori-plugin-generator-sitemap';
   }
 
+  /**
+   * The default configuration.
+   * @return {Object} The configuration.
+   * @example <caption>SitemapGenerator.defaultConfig()</caption>
+   * const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
+   * @static
+   */
   static defaultConfig() {
     return {
-      // Sitemap URL (ie https://sfc.fm)
+      // Sitemap URL (ie https://domain.tld)
       base_url: '',
 
       // Location where the XML sitemap will be written to.
@@ -43,56 +57,160 @@ class SitemapGenerator {
     };
   }
 
-  static validateConfig(config, _uttori) {
+  /**
+   * Validates the provided configuration for required entries.
+   * @param {Object} config - A configuration object.
+   * @param {Object} config[SitemapGenerator.configKey] - A configuration object specifically for this plugin.
+   * @param {Object[]} config[SitemapGenerator.configKey].urls - A collection of Uttori documents.
+   * @param {RegExp[]} config[SitemapGenerator.configKey].url_filters - A collection of Regular Expression URL filters.
+   * @param {String} config[SitemapGenerator.configKey].base_url - The base URL (ie https://domain.tld) for all documents.
+   * @param {String} config[SitemapGenerator.configKey].directory - The path to the location you want the sitemap file to be writtent to.
+   * @param {Object} _context - A Uttori-like context (unused).
+   * @example <caption>SitemapGenerator.validateConfig(config, _context)</caption>
+   * const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
+   * @static
+   */
+  static validateConfig(config, _context) {
     debug('Validating config...');
-    if (!config.sitemap) {
+    if (!config[SitemapGenerator.configKey]) {
       debug('Config Error: `sitemap` configuration key is missing.');
       throw new Error('sitemap configuration key is missing.');
     }
-    if (!Array.isArray(config.sitemap.urls)) {
+    if (!Array.isArray(config[SitemapGenerator.configKey].urls)) {
       debug('Config Error: `urls` should be an array of documents.');
       throw new Error('urls should be an array of documents.');
     }
-    if (config.sitemap.url_filters && !Array.isArray(config.sitemap.url_filters)) {
+    if (config[SitemapGenerator.configKey].url_filters && !Array.isArray(config[SitemapGenerator.configKey].url_filters)) {
       debug('Config Error: `url_filters` should be an array of regular expression url filters.');
       throw new Error('url_filters should be an array of regular expression url filters.');
     }
-    if (!config.sitemap.base_url || typeof config.sitemap.base_url !== 'string') {
+    if (!config[SitemapGenerator.configKey].base_url || typeof config[SitemapGenerator.configKey].base_url !== 'string') {
       debug('Config Error: `base_url` is required should be an string of your base URL (ie https://domain.tld).');
       throw new Error('base_url is required should be an string of your base URL (ie https://domain.tld).');
     }
-    if (!config.sitemap.directory || typeof config.sitemap.directory !== 'string') {
+    if (!config[SitemapGenerator.configKey].directory || typeof config[SitemapGenerator.configKey].directory !== 'string') {
       debug('Config Error: `directory` is required should be the path to the location you want the sitemap to be writtent to.');
       throw new Error('directory is required should be the path to the location you want the sitemap to be writtent to.');
     }
-
     debug('Validated config.');
   }
 
-  static async callback(_document, uttori) {
-    const defaultConfig = SitemapGenerator.defaultConfig();
-    const directory = uttori.config.sitemap.directory || defaultConfig.directory;
-    const filename = uttori.config.sitemap.filename || defaultConfig.filename;
-    const extension = uttori.config.sitemap.extension || defaultConfig.extension;
+  /**
+   * Register the plugin with a provided set of events on a provided Hook system.
+   * @param {Object} context - A Uttori-like context.
+   * @param {Object} context.hooks - An event system / hook system to use.
+   * @param {Function} context.hooks.on - An event registration function.
+   * @param {Object} context.config - A provided configuration to use.
+   * @param {Object} context.config.events - An object whose keys correspong to methods, and contents are events to listen for.
+   * @example <caption>SitemapGenerator.register(context)</caption>
+   * const context = {
+   *   hooks: {
+   *     on: (event, callback) => { ... },
+   *   },
+   *   config: {
+   *     [SitemapGenerator.configKey]: {
+   *       ...,
+   *       events: {
+   *         callback: ['document-save', 'document-delete'],
+   *         validateConfig: ['validate-config'],
+   *       },
+   *     },
+   *   },
+   * };
+   * SitemapGenerator.register(context);
+   * @static
+   */
+  static register(context) {
+    if (!context || !context.hooks || typeof context.hooks.on !== 'function') {
+      throw new Error("Missing event dispatcher in 'context.hooks.on(event, callback)' format.");
+    }
+    const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
+    if (!config.events) {
+      throw new Error("Missing events to listen to for in 'config.events'.");
+    }
+    Object.keys(config.events).forEach((method) => {
+      config.events[method].forEach((event) => context.hooks.on(event, SitemapGenerator[method]));
+    });
+  }
 
-    const sitemap = await SitemapGenerator.generateSitemap(uttori);
+  /**
+   * Wrapper function for calling generating and writing the sitemap file.
+   * @param {Object} _document - A Uttori document (unused).
+   * @param {Object} context - A Uttori-like context.
+   * @param {Object} context.config - A provided configuration to use.
+   * @param {String} context.config.directory - The directory to write the sitemap to.
+   * @param {String} context.config.filename - The name to use for the generated file.
+   * @param {String} context.config.extension - The file extension to use for the generated file.
+   * @param {Object} context.storageProvider - A provided Uttori StorageProvider instance.
+   * @param {Function} context.storageProvider.getQuery - Access method for getting documents.
+   * @return {Object} The provided document.
+   * @example <caption>SitemapGenerator.callback(_document, context)</caption>
+   * const context = {
+   *   config: {
+   *     [SitemapGenerator.configKey]: {
+   *       ...,
+   *     },
+   *   },
+   *   storageProvider: {
+   *     getQuery: (query) => { ... }
+   *   },
+   * };
+   * SitemapGenerator.callback(null, context);
+   * @static
+   */
+  static async callback(_document, context) {
+    debug('callback');
+    const { directory, filename, extension } = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
+    const sitemap = await SitemapGenerator.generateSitemap(context);
+    debug(`File: ${directory}/${filename}.${extension}`);
     FileUtility.writeFileSync(directory, filename, extension, sitemap);
     return _document;
   }
 
-  static async generateSitemap(uttori) {
-    debug('Generating Sitemap', uttori.config.sitemap);
-    const defaultConfig = SitemapGenerator.defaultConfig();
-    const urls = uttori.config.sitemap.urls || defaultConfig.urls;
-    const base_url = uttori.config.sitemap.base_url || defaultConfig.base_url;
-    const url_filters = uttori.config.sitemap.url_filters || defaultConfig.url_filters;
-    const page_priority = uttori.config.sitemap.page_priority || defaultConfig.page_priority;
-    const xml_header = uttori.config.sitemap.xml_header || defaultConfig.xml_header;
-    const xml_footer = uttori.config.sitemap.xml_footer || defaultConfig.xml_footer;
+  /**
+   * Generates a sitemap from the provided context.
+   * @param {Object} _document - A Uttori document (unused).
+   * @param {Object} context - A Uttori-like context.
+   * @param {Object} context.config - A provided configuration to use.
+   * @param {String} context.config.base_url - The prefix for URLs in the sitemap.
+   * @param {Number} context.config.page_priority - The page_priority for pages.
+   * @param {RegExp[]} context.config.url_filters - A collection of URL filters used to filter documents.
+   * @param {Object[]} context.config.urls - Additional documents to add to the sitemap.
+   * @param {String} context.config.urls[].slug - The path for the current document.
+   * @param {String} context.config.urls[].updateDate - The timestamp of the last update for the current document.
+   * @param {String} context.config.xml_footer - The suffix for the sitemap.
+   * @param {String} context.config.xml_header - The prefix for the sitemap.
+   * @param {Object} context.storageProvider - A provided Uttori StorageProvider instance.
+   * @param {Function} context.storageProvider.getQuery - Access method for getting documents.
+   * @return {String} The generated sitemap.
+   * @example <caption>SitemapGenerator.callback(_document, context)</caption>
+   * const context = {
+   *   config: {
+   *     [SitemapGenerator.configKey]: {
+   *       ...,
+   *     },
+   *   },
+   *   storageProvider: {
+   *     getQuery: (query) => { ... }
+   *   },
+   * };
+   * SitemapGenerator.generateSitemap(context);
+   * @static
+   */
+  static async generateSitemap(context) {
+    debug('generateSitemap');
+    const {
+      base_url,
+      page_priority,
+      url_filters,
+      urls,
+      xml_footer,
+      xml_header,
+    } = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
 
     let documents = [];
     try {
-      documents = await uttori.storageProvider.getQuery("SELECT 'slug', 'createDate', 'updateDate' FROM documents WHERE slug != '' ORDER BY updateDate DESC LIMIT 10000");
+      documents = await context.storageProvider.getQuery("SELECT 'slug', 'createDate', 'updateDate' FROM documents WHERE slug != '' ORDER BY updateDate DESC LIMIT 10000");
     } catch (error) {
       /* istanbul ignore next */
       debug('Error geting documents:', error);
@@ -107,7 +225,8 @@ class SitemapGenerator {
       });
     });
 
-    let urlFilter = R.identity;
+    // eslint-disable-next-line unicorn/consistent-function-scoping
+    let urlFilter = (input) => input;
     /* istanbul ignore else */
     if (Array.isArray(url_filters) && url_filters.length > 0) {
       urlFilter = (route) => {
