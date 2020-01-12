@@ -67,7 +67,7 @@ class SitemapGenerator {
    * @param {String} config[SitemapGenerator.configKey].directory - The path to the location you want the sitemap file to be writtent to.
    * @param {Object} _context - A Uttori-like context (unused).
    * @example <caption>SitemapGenerator.validateConfig(config, _context)</caption>
-   * const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
+   * SitemapGenerator.validateConfig({ ... });
    * @static
    */
   static validateConfig(config, _context) {

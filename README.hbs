@@ -14,42 +14,49 @@ A utility method for generating a XML sitemap.
 npm install --save uttori-plugin-generator-sitemap
 ```
 
-# Config
+## Config
 
 ```js
 {
-      // Sitemap URL (ie https://domain.tld)
-      base_url: '',
+  // Registration Events
+  events: {
+    renderContent: [],
+    renderCollection: [],
+    validateConfig: [],
+  },
 
-      // Location where the XML sitemap will be written to.
-      directory: '',
+  // Sitemap URL (ie https://domain.tld)
+  base_url: '',
 
-      // Sitemap URL Filter
-      url_filters: [],
+  // Location where the XML sitemap will be written to.
+  directory: '',
 
-      // Sitemap XML Header
-      xml_header: '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">',
+  // Sitemap URL Filter
+  url_filters: [],
 
-      // Sitemap XML Footer
-      xml_footer: '</urlset>',
+  // Sitemap XML Header
+  xml_header: '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">',
 
-      // Sitemap Filename
-      filename: 'sitemap',
+  // Sitemap XML Footer
+  xml_footer: '</urlset>',
 
-      // Sitemap Fie Extension
-      extension: 'xml',
+  // Sitemap Filename
+  filename: 'sitemap',
 
-      // Sitemap default page priority
-      page_priority: '0.80',
+  // Sitemap Fie Extension
+  extension: 'xml',
 
-      // Sitemap URLs, must be an array.
-      urls: [],
+  // Sitemap default page priority
+  page_priority: '0.80',
+
+  // Sitemap URLs, must be an array.
+  urls: [],
 }
 ```
 
 * * *
 
-# API Reference
+## API Reference
 
 {{>main}}
 
