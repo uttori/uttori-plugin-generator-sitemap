@@ -56,7 +56,7 @@ npm install --save uttori-plugin-generator-sitemap
 ## SitemapGenerator
 Uttori Sitemap Generator
 
-**Kind**: global class
+**Kind**: global class  
 
 * [SitemapGenerator](#SitemapGenerator)
     * [.configKey](#SitemapGenerator.configKey) ⇒ <code>String</code>
@@ -71,9 +71,9 @@ Uttori Sitemap Generator
 ### SitemapGenerator.configKey ⇒ <code>String</code>
 The configuration key for plugin to look for in the provided configuration.
 
-**Kind**: static property of [<code>SitemapGenerator</code>](#SitemapGenerator)
-**Returns**: <code>String</code> - The configuration key.
-**Example** *(SitemapGenerator.configKey)*
+**Kind**: static property of [<code>SitemapGenerator</code>](#SitemapGenerator)  
+**Returns**: <code>String</code> - The configuration key.  
+**Example** *(SitemapGenerator.configKey)*  
 ```js
 const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
 ```
@@ -82,9 +82,9 @@ const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapG
 ### SitemapGenerator.defaultConfig() ⇒ <code>Object</code>
 The default configuration.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
-**Returns**: <code>Object</code> - The configuration.
-**Example** *(SitemapGenerator.defaultConfig())*
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
+**Returns**: <code>Object</code> - The configuration.  
+**Example** *(SitemapGenerator.defaultConfig())*  
 ```js
 const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
 ```
@@ -93,7 +93,7 @@ const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapG
 ### SitemapGenerator.validateConfig(config, _context)
 Validates the provided configuration for required entries.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -105,7 +105,7 @@ Validates the provided configuration for required entries.
 | config[SitemapGenerator.configKey].directory | <code>String</code> | The path to the location you want the sitemap file to be writtent to. |
 | _context | <code>Object</code> | A Uttori-like context (unused). |
 
-**Example** *(SitemapGenerator.validateConfig(config, _context))*
+**Example** *(SitemapGenerator.validateConfig(config, _context))*  
 ```js
 const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
 ```
@@ -114,7 +114,7 @@ const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapG
 ### SitemapGenerator.register(context)
 Register the plugin with a provided set of events on a provided Hook system.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -124,7 +124,7 @@ Register the plugin with a provided set of events on a provided Hook system.
 | context.config | <code>Object</code> | A provided configuration to use. |
 | context.config.events | <code>Object</code> | An object whose keys correspong to methods, and contents are events to listen for. |
 
-**Example** *(SitemapGenerator.register(context))*
+**Example** *(SitemapGenerator.register(context))*  
 ```js
 const context = {
   hooks: {
@@ -147,8 +147,8 @@ SitemapGenerator.register(context);
 ### SitemapGenerator.callback(_document, context) ⇒ <code>Object</code>
 Wrapper function for calling generating and writing the sitemap file.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
-**Returns**: <code>Object</code> - The provided document.
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
+**Returns**: <code>Object</code> - The provided document.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -161,7 +161,7 @@ Wrapper function for calling generating and writing the sitemap file.
 | context.storageProvider | <code>Object</code> | A provided Uttori StorageProvider instance. |
 | context.storageProvider.getQuery | <code>function</code> | Access method for getting documents. |
 
-**Example** *(SitemapGenerator.callback(_document, context))*
+**Example** *(SitemapGenerator.callback(_document, context))*  
 ```js
 const context = {
   config: {
@@ -180,8 +180,8 @@ SitemapGenerator.callback(null, context);
 ### SitemapGenerator.generateSitemap(_document, context) ⇒ <code>String</code>
 Generates a sitemap from the provided context.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
-**Returns**: <code>String</code> - The generated sitemap.
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
+**Returns**: <code>String</code> - The generated sitemap.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -199,7 +199,7 @@ Generates a sitemap from the provided context.
 | context.storageProvider | <code>Object</code> | A provided Uttori StorageProvider instance. |
 | context.storageProvider.getQuery | <code>function</code> | Access method for getting documents. |
 
-**Example** *(SitemapGenerator.callback(_document, context))*
+**Example** *(SitemapGenerator.callback(_document, context))*  
 ```js
 const context = {
   config: {
