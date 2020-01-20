@@ -37,13 +37,13 @@ test('SitemapGenerator.register(context): can register', (t) => {
 test('SitemapGenerator.register(context): errors without event dispatcher', (t) => {
   t.throws(() => {
     SitemapGenerator.register({ hooks: {} });
-  }, 'Missing event dispatcher in \'context.hooks.on(event, callback)\' format.');
+  }, { message: 'Missing event dispatcher in \'context.hooks.on(event, callback)\' format.' });
 });
 
 test('SitemapGenerator.register(context): errors without events', (t) => {
   t.throws(() => {
     SitemapGenerator.register({ hooks: { on: () => {} }, config: { [SitemapGenerator.configKey]: { } } });
-  }, 'Missing events to listen to for in \'config.events\'.');
+  }, { message: 'Missing events to listen to for in \'config.events\'.' });
 });
 
 test('SitemapGenerator.defaultConfig(): can return a default config', (t) => {
@@ -69,50 +69,46 @@ test('SitemapGenerator.generateSitemap(_document, context): filters out urls wit
 });
 
 test('SitemapGenerator.validateConfig(config, _context): throws when sitemaps key is missing', (t) => {
-  const error = t.throws(() => {
+  t.throws(() => {
     SitemapGenerator.validateConfig({});
-  }, Error);
-  t.is(error.message, 'sitemap configuration key is missing.');
+  }, { message: 'sitemap configuration key is missing.' });
 });
 
 test('SitemapGenerator.validateConfig(config, _context): throws when urls is not an array', (t) => {
-  const error = t.throws(() => {
+  t.throws(() => {
     SitemapGenerator.validateConfig({
       [SitemapGenerator.configKey]: {
         urls: {},
         url_filters: [],
       },
     });
-  }, Error);
-  t.is(error.message, 'urls should be an array of documents.');
+  }, { message: 'urls should be an array of documents.' });
 });
 
 test('SitemapGenerator.validateConfig(config, _context): throws when url_filters is not an array', (t) => {
-  const error = t.throws(() => {
+  t.throws(() => {
     SitemapGenerator.validateConfig({
       [SitemapGenerator.configKey]: {
         urls: [],
         url_filters: {},
       },
     });
-  }, Error);
-  t.is(error.message, 'url_filters should be an array of regular expression url filters.');
+  }, { message: 'url_filters should be an array of regular expression url filters.' });
 });
 
 test('SitemapGenerator.validateConfig(config, _context): throws when base_url is missing', (t) => {
-  const error = t.throws(() => {
+  t.throws(() => {
     SitemapGenerator.validateConfig({
       [SitemapGenerator.configKey]: {
         urls: [],
         url_filters: [],
       },
     });
-  }, Error);
-  t.is(error.message, 'base_url is required should be an string of your base URL (ie https://domain.tld).');
+  }, { message: 'base_url is required should be an string of your base URL (ie https://domain.tld).' });
 });
 
 test('SitemapGenerator.validateConfig(config, _context): throws when base_url is not a string', (t) => {
-  const error = t.throws(() => {
+  t.throws(() => {
     SitemapGenerator.validateConfig({
       [SitemapGenerator.configKey]: {
         urls: [],
@@ -120,12 +116,11 @@ test('SitemapGenerator.validateConfig(config, _context): throws when base_url is
         base_url: null,
       },
     });
-  }, Error);
-  t.is(error.message, 'base_url is required should be an string of your base URL (ie https://domain.tld).');
+  }, { message: 'base_url is required should be an string of your base URL (ie https://domain.tld).' });
 });
 
 test('SitemapGenerator.validateConfig(config, _context): throws when directory is missing', (t) => {
-  const error = t.throws(() => {
+  t.throws(() => {
     SitemapGenerator.validateConfig({
       [SitemapGenerator.configKey]: {
         urls: [],
@@ -133,12 +128,11 @@ test('SitemapGenerator.validateConfig(config, _context): throws when directory i
         base_url: 'https://domain.tld',
       },
     });
-  }, Error);
-  t.is(error.message, 'directory is required should be the path to the location you want the sitemap to be writtent to.');
+  }, { message: 'directory is required should be the path to the location you want the sitemap to be writtent to.' });
 });
 
 test('SitemapGenerator.validateConfig(config, _context): throws when directory is not a string', (t) => {
-  const error = t.throws(() => {
+  t.throws(() => {
     SitemapGenerator.validateConfig({
       [SitemapGenerator.configKey]: {
         urls: [],
@@ -147,8 +141,7 @@ test('SitemapGenerator.validateConfig(config, _context): throws when directory i
         directory: null,
       },
     });
-  }, Error);
-  t.is(error.message, 'directory is required should be the path to the location you want the sitemap to be writtent to.');
+  }, { message: 'directory is required should be the path to the location you want the sitemap to be writtent to.' });
 });
 
 test('SitemapGenerator.validateConfig(config, _context): can validate', (t) => {
