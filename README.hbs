@@ -20,9 +20,8 @@ npm install --save uttori-plugin-generator-sitemap
 {
   // Registration Events
   events: {
-    renderContent: [],
-    renderCollection: [],
-    validateConfig: [],
+    callback: ['document-save', 'document-delete'],
+    validateConfig: ['validate-config'],
   },
 
   // Sitemap URL (ie https://domain.tld)
