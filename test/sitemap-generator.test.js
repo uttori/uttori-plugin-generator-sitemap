@@ -1,7 +1,7 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 const test = require('ava');
 const { FileUtility } = require('uttori-utilities');
-const SitemapGenerator = require('../src');
+const { SitemapGenerator } = require('../src');
 
 const config = SitemapGenerator.defaultConfig();
 const context = {
@@ -12,8 +12,8 @@ const context = {
       directory: './',
     },
   },
-  storageProvider: {
-    getQuery: (_query) => [
+  hooks: {
+    fetch: () => [
       {
         updateDate: null,
         createDate: new Date('2019-04-20').toISOString(),
@@ -30,19 +30,39 @@ const context = {
 
 test('SitemapGenerator.register(context): can register', (t) => {
   t.notThrows(() => {
-    SitemapGenerator.register({ hooks: { on: () => {} }, config: { [SitemapGenerator.configKey]: { events: { callback: [] } } } });
+    SitemapGenerator.register({
+      hooks: {
+        on: () => {},
+      },
+      config: {
+        [SitemapGenerator.configKey]: {
+          events: {
+            callback: [],
+          },
+        },
+      },
+    });
   });
 });
 
 test('SitemapGenerator.register(context): errors without event dispatcher', (t) => {
   t.throws(() => {
-    SitemapGenerator.register({ hooks: {} });
+    SitemapGenerator.register({
+      hooks: {},
+    });
   }, { message: 'Missing event dispatcher in \'context.hooks.on(event, callback)\' format.' });
 });
 
 test('SitemapGenerator.register(context): errors without events', (t) => {
   t.throws(() => {
-    SitemapGenerator.register({ hooks: { on: () => {} }, config: { [SitemapGenerator.configKey]: { } } });
+    SitemapGenerator.register({
+      hooks: {
+        on: () => {},
+      },
+      config: {
+        [SitemapGenerator.configKey]: { },
+      },
+    });
   }, { message: 'Missing events to listen to for in \'config.events\'.' });
 });
 
@@ -52,19 +72,49 @@ test('SitemapGenerator.defaultConfig(): can return a default config', (t) => {
 
 test('SitemapGenerator.generateSitemap(_document, context): generates a valid sitemap', async (t) => {
   t.plan(1);
-  const output = await SitemapGenerator.generateSitemap({ ...context, config: { ...context.config, [SitemapGenerator.configKey]: { ...context.config[SitemapGenerator.configKey], urls: [] } } });
+  const output = await SitemapGenerator.generateSitemap({
+    ...context,
+    config: {
+      ...context.config,
+      [SitemapGenerator.configKey]: {
+        ...context.config[SitemapGenerator.configKey],
+        urls: [],
+      },
+    },
+  });
   t.is(output, '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://domain.tld/good-title</loc><lastmod>2019-04-20T00:00:00.000Z</lastmod><priority>0.80</priority></url><url><loc>https://domain.tld/fake-title</loc><lastmod>2019-04-21T00:00:00.000Z</lastmod><priority>0.80</priority></url></urlset>');
 });
 
 test('SitemapGenerator.generateSitemap(_document, context): generates a valid sitemap with no documents', async (t) => {
   t.plan(1);
-  const output = await SitemapGenerator.generateSitemap({ storageProvider: { getQuery: () => [] }, config: { ...context.config, [SitemapGenerator.configKey]: { ...context.config[SitemapGenerator.configKey], urls: [] } } });
+  const output = await SitemapGenerator.generateSitemap({
+    storageProvider: {
+      getQuery: () => [],
+    },
+    config: {
+      ...context.config,
+      [SitemapGenerator.configKey]: {
+        ...context.config[SitemapGenerator.configKey],
+        urls: [],
+      },
+    },
+  });
   t.is(output, '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"></urlset>');
 });
 
 test('SitemapGenerator.generateSitemap(_document, context): filters out urls with a filter', async (t) => {
   t.plan(1);
-  const output = await SitemapGenerator.generateSitemap({ ...context, config: { ...context.config, [SitemapGenerator.configKey]: { ...context.config[SitemapGenerator.configKey], urls: [], url_filters: [/fake-title$/i] } } });
+  const output = await SitemapGenerator.generateSitemap({
+    ...context,
+    config: {
+      ...context.config,
+      [SitemapGenerator.configKey]: {
+        ...context.config[SitemapGenerator.configKey],
+        urls: [],
+        url_filters: [/fake-title$/i],
+      },
+    },
+  });
   t.is(output, '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://domain.tld/good-title</loc><lastmod>2019-04-20T00:00:00.000Z</lastmod><priority>0.80</priority></url></urlset>');
 });
 
