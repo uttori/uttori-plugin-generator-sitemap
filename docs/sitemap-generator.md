@@ -105,6 +105,9 @@ Wrapper function for calling generating and writing the sitemap file.
 | context.config.directory | <code>string</code> | The directory to write the sitemap to. |
 | context.config.filename | <code>string</code> | The name to use for the generated file. |
 | context.config.extension | <code>string</code> | The file extension to use for the generated file. |
+| context.hooks | <code>object</code> | An event system / hook system to use. |
+| context.hooks.on | <code>function</code> | An event registration function. |
+| context.hooks.fetch | <code>function</code> | An event dispatch function that returns an array of results. |
 
 **Example** *(SitemapGenerator.callback(_document, context))*  
 ```js
@@ -114,8 +117,8 @@ const context = {
       ...,
     },
   },
-  storageProvider: {
-    getQuery: (query) => { ... }
+  hooks: {
+    on: (event) => { ... }
   },
 };
 SitemapGenerator.callback(null, context);
@@ -153,8 +156,8 @@ const context = {
       ...,
     },
   },
-  storageProvider: {
-    getQuery: (query) => { ... }
+  hooks: {
+    fetch: (event, query) => { ... }
   },
 };
 SitemapGenerator.generateSitemap(context);

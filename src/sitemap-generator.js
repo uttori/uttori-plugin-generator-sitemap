@@ -148,6 +148,9 @@ class SitemapGenerator {
    * @param {string} context.config.directory - The directory to write the sitemap to.
    * @param {string} context.config.filename - The name to use for the generated file.
    * @param {string} context.config.extension - The file extension to use for the generated file.
+   * @param {object} context.hooks - An event system / hook system to use.
+   * @param {Function} context.hooks.on - An event registration function.
+   * @param {Function} context.hooks.fetch - An event dispatch function that returns an array of results.
    * @returns {Promise} The provided document.
    * @example <caption>SitemapGenerator.callback(_document, context)</caption>
    * const context = {
@@ -156,8 +159,8 @@ class SitemapGenerator {
    *       ...,
    *     },
    *   },
-   *   storageProvider: {
-   *     getQuery: (query) => { ... }
+   *   hooks: {
+   *     on: (event) => { ... }
    *   },
    * };
    * SitemapGenerator.callback(null, context);
@@ -197,8 +200,8 @@ class SitemapGenerator {
    *       ...,
    *     },
    *   },
-   *   storageProvider: {
-   *     getQuery: (query) => { ... }
+   *   hooks: {
+   *     fetch: (event, query) => { ... }
    *   },
    * };
    * SitemapGenerator.generateSitemap(context);
