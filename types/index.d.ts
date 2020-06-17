@@ -84,8 +84,8 @@ declare class SitemapGenerator {
      *       ...,
      *     },
      *   },
-     *   storageProvider: {
-     *     getQuery: (query) => { ... }
+     *   hooks: {
+     *     on: (event) => { ... }
      *   },
      * };
      * SitemapGenerator.callback(null, context);
@@ -95,6 +95,9 @@ declare class SitemapGenerator {
      * @param context.config.directory - The directory to write the sitemap to.
      * @param context.config.filename - The name to use for the generated file.
      * @param context.config.extension - The file extension to use for the generated file.
+     * @param context.hooks - An event system / hook system to use.
+     * @param context.hooks.on - An event registration function.
+     * @param context.hooks.fetch - An event dispatch function that returns an array of results.
      * @returns The provided document.
      */
     static callback(_document: any, context: {
@@ -102,6 +105,10 @@ declare class SitemapGenerator {
             directory: string;
             filename: string;
             extension: string;
+        };
+        hooks: {
+            on: (...params: any[]) => any;
+            fetch: (...params: any[]) => any;
         };
     }): Promise;
     /**
@@ -114,8 +121,9 @@ declare class SitemapGenerator {
      *       ...,
      *     },
      *   },
-     *   storageProvider: {
-     *     getQuery: (query) => { ... }
+     *   hooks: {
+     *     on: (event) => { ... },
+     *     fetch: (event, query) => { ... },
      *   },
      * };
      * SitemapGenerator.generateSitemap(context);

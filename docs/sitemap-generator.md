@@ -157,7 +157,8 @@ const context = {
     },
   },
   hooks: {
-    fetch: (event, query) => { ... }
+    on: (event) => { ... },
+    fetch: (event, query) => { ... },
   },
 };
 SitemapGenerator.generateSitemap(context);
