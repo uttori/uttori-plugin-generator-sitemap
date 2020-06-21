@@ -1,6 +1,6 @@
 {
   "name": "@uttori/plugin-generator-sitemap",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A plugin to generate an XML sitemap for search engines.",
   "author": "Matthew Callis <matthew.callis@gmail.com>",
   "contributors": [],
