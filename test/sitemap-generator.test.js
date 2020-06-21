@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable security/detect-non-literal-fs-filename */
 const test = require('ava');
 const { FileUtility } = require('uttori-utilities');
@@ -14,16 +15,18 @@ const context = {
   },
   hooks: {
     fetch: () => [
-      {
-        updateDate: null,
-        createDate: new Date('2019-04-20').toISOString(),
-        slug: 'good-title',
-      },
-      {
-        updateDate: new Date('2019-04-21').toISOString(),
-        createDate: new Date('2019-04-21').toISOString(),
-        slug: 'fake-title',
-      },
+      [
+        {
+          updateDate: null,
+          createDate: new Date('2019-04-20').toISOString(),
+          slug: 'good-title',
+        },
+        {
+          updateDate: new Date('2019-04-21').toISOString(),
+          createDate: new Date('2019-04-21').toISOString(),
+          slug: 'fake-title',
+        },
+      ],
     ],
   },
 };

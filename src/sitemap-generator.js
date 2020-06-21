@@ -221,7 +221,7 @@ class SitemapGenerator {
 
     let documents = [];
     try {
-      documents = await context.hooks.fetch('storage-query', "SELECT 'slug', 'createDate', 'updateDate' FROM documents WHERE slug != '' ORDER BY updateDate DESC LIMIT 10000");
+      [documents] = await context.hooks.fetch('storage-query', "SELECT 'slug', 'createDate', 'updateDate' FROM documents WHERE slug != '' ORDER BY updateDate DESC LIMIT 10000");
     } catch (error) {
       /* istanbul ignore next */
       debug('Error geting documents:', error);
