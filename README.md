@@ -198,8 +198,8 @@ Generates a sitemap from the provided context.
 | context.config.page_priority | <code>number</code> | The page_priority for pages. |
 | context.config.url_filters | <code>Array.&lt;RegExp&gt;</code> | A collection of URL filters used to filter documents. |
 | context.config.urls | <code>Array.&lt;object&gt;</code> | Additional documents to add to the sitemap. |
-| context.config.urls[].slug | <code>string</code> | The path for the current document. |
-| context.config.urls[].updateDate | <code>string</code> | The timestamp of the last update for the current document. |
+| context.config.urls.slug | <code>string</code> | The path for the current document. |
+| context.config.urls.updateDate | <code>string</code> | The timestamp of the last update for the current document. |
 | context.config.xml_footer | <code>string</code> | The suffix for the sitemap. |
 | context.config.xml_header | <code>string</code> | The prefix for the sitemap. |
 | context.config.events | <code>object</code> | An object whose keys correspong to methods, and contents are events to listen for. |

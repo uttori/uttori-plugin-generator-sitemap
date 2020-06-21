@@ -133,8 +133,8 @@ declare class SitemapGenerator {
      * @param context.config.page_priority - The page_priority for pages.
      * @param context.config.url_filters - A collection of URL filters used to filter documents.
      * @param context.config.urls - Additional documents to add to the sitemap.
-     * @param context.config.urls[].slug - The path for the current document.
-     * @param context.config.urls[].updateDate - The timestamp of the last update for the current document.
+     * @param context.config.urls.slug - The path for the current document.
+     * @param context.config.urls.updateDate - The timestamp of the last update for the current document.
      * @param context.config.xml_footer - The suffix for the sitemap.
      * @param context.config.xml_header - The prefix for the sitemap.
      * @param context.config.events - An object whose keys correspong to methods, and contents are events to listen for.
