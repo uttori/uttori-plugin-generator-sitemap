@@ -69,6 +69,24 @@ test('SitemapGenerator.register(context): errors without events', (t) => {
   }, { message: 'Missing events to listen to for in \'config.events\'.' });
 });
 
+test('SitemapGenerator.register(context): does not error with events corresponding to missing methods', (t) => {
+  t.notThrows(() => {
+    SitemapGenerator.register({
+      hooks: {
+        on: () => {},
+      },
+      config: {
+        [SitemapGenerator.configKey]: {
+          events: {
+            test: ['test'],
+            validateConfig: ['validate-config'],
+          },
+        },
+      },
+    });
+  });
+});
+
 test('SitemapGenerator.defaultConfig(): can return a default config', (t) => {
   t.notThrows(SitemapGenerator.defaultConfig);
 });

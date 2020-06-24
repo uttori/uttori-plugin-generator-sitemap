@@ -135,7 +135,13 @@ class SitemapGenerator {
       throw new Error("Missing events to listen to for in 'config.events'.");
     }
     Object.keys(config.events).forEach((method) => {
-      config.events[method].forEach((event) => context.hooks.on(event, SitemapGenerator[method]));
+      config.events[method].forEach((event) => {
+        if (typeof SitemapGenerator[method] !== 'function') {
+          debug(`Missing function "${method}" for key "${event}"`);
+          return;
+        }
+        context.hooks.on(event, SitemapGenerator[method]);
+      });
     });
   }
 
