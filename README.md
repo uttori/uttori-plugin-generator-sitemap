@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/uttori/uttori-plugin-generator-sitemap.svg?branch=master)](https://travis-ci.org/uttori/uttori-plugin-generator-sitemap)
 [![Dependency Status](https://david-dm.org/uttori/uttori-plugin-generator-sitemap.svg)](https://david-dm.org/uttori/uttori-plugin-generator-sitemap)
 [![Coverage Status](https://coveralls.io/repos/uttori/uttori-plugin-generator-sitemap/badge.svg?branch=master)](https://coveralls.io/r/uttori/uttori-plugin-generator-sitemap?branch=master)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Futtori%2Futtori-plugin-generator-sitemap.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Futtori%2Futtori-plugin-generator-sitemap?ref=badge_shield)
 
 # Uttori Sitemap Generator
 
@@ -242,3 +243,6 @@ DEBUG=Uttori* npm test
 ## License
 
 * [MIT](LICENSE)
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Futtori%2Futtori-plugin-generator-sitemap.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Futtori%2Futtori-plugin-generator-sitemap?ref=badge_large)
