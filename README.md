@@ -1,6 +1,6 @@
 [![view on npm](https://img.shields.io/npm/v/@uttori/plugin-generator-sitemap.svg)](https://www.npmjs.com/package/@uttori/plugin-generator-sitemap)
 [![npm module downloads](https://img.shields.io/npm/dt/@uttori/plugin-generator-sitemap.svg)](https://www.npmjs.com/package/@uttori/plugin-generator-sitemap)
-[![Build Status](https://travis-ci.org/uttori/uttori-plugin-generator-sitemap.svg?branch=master)](https://travis-ci.org/uttori/uttori-plugin-generator-sitemap)
+[![Build Status](https://travis-ci.com/uttori/uttori-plugin-generator-sitemap.svg?branch=master)](https://travis-ci.com/uttori/uttori-plugin-generator-sitemap)
 [![Dependency Status](https://david-dm.org/uttori/uttori-plugin-generator-sitemap.svg)](https://david-dm.org/uttori/uttori-plugin-generator-sitemap)
 [![Coverage Status](https://coveralls.io/repos/uttori/uttori-plugin-generator-sitemap/badge.svg?branch=master)](https://coveralls.io/r/uttori/uttori-plugin-generator-sitemap?branch=master)
 
@@ -62,7 +62,7 @@ npm install --save uttori-plugin-generator-sitemap
 ## SitemapGenerator
 Uttori Sitemap Generator
 
-**Kind**: global class  
+**Kind**: global class
 
 * [SitemapGenerator](#SitemapGenerator)
     * [.configKey](#SitemapGenerator.configKey) ⇒ <code>string</code>
@@ -77,9 +77,9 @@ Uttori Sitemap Generator
 ### SitemapGenerator.configKey ⇒ <code>string</code>
 The configuration key for plugin to look for in the provided configuration.
 
-**Kind**: static property of [<code>SitemapGenerator</code>](#SitemapGenerator)  
-**Returns**: <code>string</code> - The configuration key.  
-**Example** *(SitemapGenerator.configKey)*  
+**Kind**: static property of [<code>SitemapGenerator</code>](#SitemapGenerator)
+**Returns**: <code>string</code> - The configuration key.
+**Example** *(SitemapGenerator.configKey)*
 ```js
 const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
 ```
@@ -88,9 +88,9 @@ const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapG
 ### SitemapGenerator.defaultConfig() ⇒ <code>object</code>
 The default configuration.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
-**Returns**: <code>object</code> - The configuration.  
-**Example** *(SitemapGenerator.defaultConfig())*  
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
+**Returns**: <code>object</code> - The configuration.
+**Example** *(SitemapGenerator.defaultConfig())*
 ```js
 const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
 ```
@@ -99,7 +99,7 @@ const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapG
 ### SitemapGenerator.validateConfig(config, [_context])
 Validates the provided configuration for required entries.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -111,7 +111,7 @@ Validates the provided configuration for required entries.
 | config.configKey.directory | <code>string</code> | The path to the location you want the sitemap file to be writtent to. |
 | [_context] | <code>object</code> | A Uttori-like context (unused). |
 
-**Example** *(SitemapGenerator.validateConfig(config, _context))*  
+**Example** *(SitemapGenerator.validateConfig(config, _context))*
 ```js
 SitemapGenerator.validateConfig({ ... });
 ```
@@ -120,7 +120,7 @@ SitemapGenerator.validateConfig({ ... });
 ### SitemapGenerator.register(context)
 Register the plugin with a provided set of events on a provided Hook system.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -130,7 +130,7 @@ Register the plugin with a provided set of events on a provided Hook system.
 | context.config | <code>object</code> | A provided configuration to use. |
 | context.config.events | <code>object</code> | An object whose keys correspong to methods, and contents are events to listen for. |
 
-**Example** *(SitemapGenerator.register(context))*  
+**Example** *(SitemapGenerator.register(context))*
 ```js
 const context = {
   hooks: {
@@ -153,8 +153,8 @@ SitemapGenerator.register(context);
 ### SitemapGenerator.callback(_document, context) ⇒ <code>Promise</code>
 Wrapper function for calling generating and writing the sitemap file.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
-**Returns**: <code>Promise</code> - The provided document.  
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
+**Returns**: <code>Promise</code> - The provided document.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -168,7 +168,7 @@ Wrapper function for calling generating and writing the sitemap file.
 | context.hooks.on | <code>function</code> | An event registration function. |
 | context.hooks.fetch | <code>function</code> | An event dispatch function that returns an array of results. |
 
-**Example** *(SitemapGenerator.callback(_document, context))*  
+**Example** *(SitemapGenerator.callback(_document, context))*
 ```js
 const context = {
   config: {
@@ -187,8 +187,8 @@ SitemapGenerator.callback(null, context);
 ### SitemapGenerator.generateSitemap(context) ⇒ <code>Promise</code>
 Generates a sitemap from the provided context.
 
-**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
-**Returns**: <code>Promise</code> - The generated sitemap.  
+**Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)
+**Returns**: <code>Promise</code> - The generated sitemap.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -207,7 +207,7 @@ Generates a sitemap from the provided context.
 | context.hooks.on | <code>function</code> | An event registration function. |
 | context.hooks.fetch | <code>function</code> | An event dispatch function that returns an array of results. |
 
-**Example** *(SitemapGenerator.callback(_document, context))*  
+**Example** *(SitemapGenerator.callback(_document, context))*
 ```js
 const context = {
   config: {

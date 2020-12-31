@@ -21,8 +21,10 @@
     "node": ">= 12"
   },
   "dependencies": {
-    "debug": "^4.2.0",
     "uttori-utilities": "^2.3.0"
+  },
+  "optionalDependencies": {
+    "debug": "^4.3.1"
   },
   "devDependencies": {
     "ava": "^3.13.0",
