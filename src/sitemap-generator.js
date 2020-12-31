@@ -1,4 +1,4 @@
-const debug = require('debug')('Uttori.Plugin.Generator.Sitemap');
+let debug = () => {}; try { debug = require('debug')('Uttori.Plugin.Generator.Sitemap'); } catch {}
 const { FileUtility } = require('uttori-utilities');
 
 /**
