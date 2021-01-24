@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.0](https://github.com/uttori/uttori-plugin-generator-sitemap/compare/v3.1.4...v4.0.0) - 2020-01-23
+
+- 🧰 Add ESM Support
+- 🧰 Add explicit exports
+- 🎁 Update dev dependencies
+
 ## [3.1.4](https://github.com/uttori/uttori-plugin-generator-sitemap/compare/v3.1.3...v3.1.4) - 2020-11-15
 
 - 🎁 Update dev dependencies

@@ -1,7 +1,7 @@
 // @ts-nocheck
 /* eslint-disable security/detect-non-literal-fs-filename */
+const fs = require('fs');
 const test = require('ava');
-const { FileUtility } = require('uttori-utilities');
 const { SitemapGenerator } = require('../src');
 
 const config = SitemapGenerator.defaultConfig();
@@ -63,7 +63,7 @@ test('SitemapGenerator.register(context): errors without events', (t) => {
         on: () => {},
       },
       config: {
-        [SitemapGenerator.configKey]: { },
+        [SitemapGenerator.configKey]: {},
       },
     });
   }, { message: 'Missing events to listen to for in \'config.events\'.' });
@@ -229,9 +229,11 @@ test('SitemapGenerator.validateConfig(config, _context): can validate', (t) => {
 });
 
 test('SitemapGenerator.callback(_document, context): writes properly generated sitemap to desired location', async (t) => {
-  await FileUtility.deleteFile('./', 'sitemap', 'xml');
+  try {
+    fs.unlinkSync('./test/sitemap.xml');
+  } catch (_) {}
   await SitemapGenerator.callback(null, { ...context, config: { ...context.config, [SitemapGenerator.configKey]: { ...context.config[SitemapGenerator.configKey], urls: [] } } });
-  const output = await FileUtility.readFile('./', 'sitemap', 'xml');
+  const output = fs.readFileSync('./sitemap.xml', { encoding: 'utf8' });
   t.is(output, '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><url><loc>https://domain.tld/good-title</loc><lastmod>2019-04-20T00:00:00.000Z</lastmod><priority>0.80</priority></url><url><loc>https://domain.tld/fake-title</loc><lastmod>2019-04-21T00:00:00.000Z</lastmod><priority>0.80</priority></url></urlset>');
-  await FileUtility.deleteFile('./', 'sitemap', 'xml');
+  fs.unlinkSync('./sitemap.xml');
 });

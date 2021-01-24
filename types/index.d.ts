@@ -2,14 +2,9 @@ declare module "sitemap-generator" {
     export = SitemapGenerator;
     class SitemapGenerator {
         static get configKey(): string;
-        static defaultConfig(): object;
+        static defaultConfig(): SitemapGeneratorConfig;
         static validateConfig(config: {
-            configKey: {
-                urls: object[];
-                url_filters: RegExp[];
-                base_url: string;
-                directory: string;
-            };
+            configKey: SitemapGeneratorConfig;
         }, _context?: object): void;
         static register(context: {
             hooks: {
@@ -21,9 +16,7 @@ declare module "sitemap-generator" {
         }): void;
         static callback(_document: object, context: {
             config: {
-                directory: string;
-                filename: string;
-                extension: string;
+                configKey: SitemapGeneratorConfig;
             };
             hooks: {
                 on: Function;
@@ -32,15 +25,7 @@ declare module "sitemap-generator" {
         }): Promise<any>;
         static generateSitemap(context: {
             config: {
-                base_url: string;
-                page_priority: number;
-                url_filters: RegExp[];
-                urls: {
-                    slug: string;
-                    updateDate: string;
-                };
-                xml_footer: string;
-                xml_header: string;
+                configKey: SitemapGeneratorConfig;
                 events: object;
             };
             hooks: {
@@ -49,6 +34,20 @@ declare module "sitemap-generator" {
             };
         }): Promise<any>;
     }
+    namespace SitemapGenerator {
+        export { SitemapGeneratorConfig };
+    }
+    type SitemapGeneratorConfig = {
+        urls: object[];
+        url_filters?: RegExp[];
+        base_url: string;
+        directory: string;
+        filename?: string;
+        extension?: string;
+        page_priority?: string;
+        xml_header?: string;
+        xml_footer?: string;
+    };
 }
 declare module "index" {
     export const SitemapGenerator: typeof import("sitemap-generator");

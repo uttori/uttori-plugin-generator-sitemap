@@ -7,6 +7,7 @@
     "plugin:optimize-regex/all",
     "plugin:ramda/recommended",
     "plugin:security/recommended",
+    "plugin:sonarjs/recommended",
     "plugin:unicorn/recommended"
   ],
   "plugins": [
@@ -17,21 +18,16 @@
     "optimize-regex",
     "ramda",
     "security",
+    "sonarjs",
     "unicorn",
     "xss"
   ],
   "env": {
-    "es6": true,
-    "browser": true,
-    "mocha": true
+    "browser": true
   },
-  "globals": {
-    "sinon": false,
-    "mocha": true,
-    "expect": true
-  },
+  "globals": {},
   "parserOptions": {
-    "ecmaVersion": 2020
+    "ecmaVersion": 2021
   },
   "rules": {
     "import/no-extraneous-dependencies": [
@@ -62,13 +58,18 @@
     "security/detect-non-literal-fs-filename": 0,
     "security/detect-non-literal-require": 0,
     "security/detect-object-injection": 0,
+    "sonarjs/cognitive-complexity": 0,
+    "sonarjs/no-duplicate-string": 0,
+    "sonarjs/no-small-switch": 0,
     "unicorn/catch-error-name": 0,
     "unicorn/filename-case": 0,
-    "unicorn/no-for-loop": 0,
+    "unicorn/no-array-reduce": 0,
     "unicorn/no-fn-reference-in-iterator": 0,
+    "unicorn/no-for-loop": 0,
+    "unicorn/no-array-for-each": 0,
     "unicorn/no-null": 0,
-    "unicorn/no-reduce": 0,
     "unicorn/no-useless-undefined": 0,
-    "unicorn/prevent-abbreviations": 0
+    "unicorn/prevent-abbreviations": 0,
+    "unicorn/prefer-optional-catch-binding": 0
   }
 }

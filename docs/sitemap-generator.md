@@ -1,13 +1,38 @@
+## Classes
+
+<dl>
+<dt><a href="#SitemapGenerator">SitemapGenerator</a></dt>
+<dd><p>Uttori Sitemap Generator</p>
+<p>Generates a valid sitemap.xml file for submitting to search engines.</p>
+</dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#debug">debug()</a> : <code>function</code></dt>
+<dd></dd>
+</dl>
+
+## Typedefs
+
+<dl>
+<dt><a href="#SitemapGeneratorConfig">SitemapGeneratorConfig</a> : <code>object</code></dt>
+<dd></dd>
+</dl>
+
 <a name="SitemapGenerator"></a>
 
 ## SitemapGenerator
 Uttori Sitemap Generator
 
+Generates a valid sitemap.xml file for submitting to search engines.
+
 **Kind**: global class  
 
 * [SitemapGenerator](#SitemapGenerator)
     * [.configKey](#SitemapGenerator.configKey) ⇒ <code>string</code>
-    * [.defaultConfig()](#SitemapGenerator.defaultConfig) ⇒ <code>object</code>
+    * [.defaultConfig()](#SitemapGenerator.defaultConfig) ⇒ [<code>SitemapGeneratorConfig</code>](#SitemapGeneratorConfig)
     * [.validateConfig(config, [_context])](#SitemapGenerator.validateConfig)
     * [.register(context)](#SitemapGenerator.register)
     * [.callback(_document, context)](#SitemapGenerator.callback) ⇒ <code>Promise</code>
@@ -26,11 +51,11 @@ const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapG
 ```
 <a name="SitemapGenerator.defaultConfig"></a>
 
-### SitemapGenerator.defaultConfig() ⇒ <code>object</code>
+### SitemapGenerator.defaultConfig() ⇒ [<code>SitemapGeneratorConfig</code>](#SitemapGeneratorConfig)
 The default configuration.
 
 **Kind**: static method of [<code>SitemapGenerator</code>](#SitemapGenerator)  
-**Returns**: <code>object</code> - The configuration.  
+**Returns**: [<code>SitemapGeneratorConfig</code>](#SitemapGeneratorConfig) - The configuration.  
 **Example** *(SitemapGenerator.defaultConfig())*  
 ```js
 const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
@@ -45,11 +70,7 @@ Validates the provided configuration for required entries.
 | Param | Type | Description |
 | --- | --- | --- |
 | config | <code>object</code> | A configuration object. |
-| config.configKey | <code>object</code> | A configuration object specifically for this plugin. |
-| config.configKey.urls | <code>Array.&lt;object&gt;</code> | A collection of Uttori documents. |
-| [config.configKey.url_filters] | <code>Array.&lt;RegExp&gt;</code> | A collection of Regular Expression URL filters. |
-| config.configKey.base_url | <code>string</code> | The base URL (ie https://domain.tld) for all documents. |
-| config.configKey.directory | <code>string</code> | The path to the location you want the sitemap file to be writtent to. |
+| config.configKey | [<code>SitemapGeneratorConfig</code>](#SitemapGeneratorConfig) | A configuration object specifically for this plugin. |
 | [_context] | <code>object</code> | A Uttori-like context (unused). |
 
 **Example** *(SitemapGenerator.validateConfig(config, _context))*  
@@ -102,9 +123,7 @@ Wrapper function for calling generating and writing the sitemap file.
 | _document | <code>object</code> | A Uttori document (unused). |
 | context | <code>object</code> | A Uttori-like context. |
 | context.config | <code>object</code> | A provided configuration to use. |
-| context.config.directory | <code>string</code> | The directory to write the sitemap to. |
-| context.config.filename | <code>string</code> | The name to use for the generated file. |
-| context.config.extension | <code>string</code> | The file extension to use for the generated file. |
+| context.config.configKey | [<code>SitemapGeneratorConfig</code>](#SitemapGeneratorConfig) | A configuration object specifically for this plugin. |
 | context.hooks | <code>object</code> | An event system / hook system to use. |
 | context.hooks.on | <code>function</code> | An event registration function. |
 | context.hooks.fetch | <code>function</code> | An event dispatch function that returns an array of results. |
@@ -135,14 +154,7 @@ Generates a sitemap from the provided context.
 | --- | --- | --- |
 | context | <code>object</code> | A Uttori-like context. |
 | context.config | <code>object</code> | A provided configuration to use. |
-| context.config.base_url | <code>string</code> | The prefix for URLs in the sitemap. |
-| context.config.page_priority | <code>number</code> | The page_priority for pages. |
-| context.config.url_filters | <code>Array.&lt;RegExp&gt;</code> | A collection of URL filters used to filter documents. |
-| context.config.urls | <code>Array.&lt;object&gt;</code> | Additional documents to add to the sitemap. |
-| context.config.urls.slug | <code>string</code> | The path for the current document. |
-| context.config.urls.updateDate | <code>string</code> | The timestamp of the last update for the current document. |
-| context.config.xml_footer | <code>string</code> | The suffix for the sitemap. |
-| context.config.xml_header | <code>string</code> | The prefix for the sitemap. |
+| context.config.configKey | [<code>SitemapGeneratorConfig</code>](#SitemapGeneratorConfig) | A configuration object specifically for this plugin. |
 | context.config.events | <code>object</code> | An object whose keys correspong to methods, and contents are events to listen for. |
 | context.hooks | <code>object</code> | An event system / hook system to use. |
 | context.hooks.on | <code>function</code> | An event registration function. |
@@ -163,3 +175,25 @@ const context = {
 };
 SitemapGenerator.generateSitemap(context);
 ```
+<a name="debug"></a>
+
+## debug() : <code>function</code>
+**Kind**: global function  
+<a name="SitemapGeneratorConfig"></a>
+
+## SitemapGeneratorConfig : <code>object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| urls | <code>Array.&lt;object&gt;</code> |  | A collection of Uttori documents. |
+| [url_filters] | <code>Array.&lt;RegExp&gt;</code> |  | A collection of Regular Expression URL filters to exclude documents. |
+| base_url | <code>string</code> |  | The base URL (ie https://domain.tld) for all documents. |
+| directory | <code>string</code> |  | The path to the location you want the sitemap file to be written to. |
+| [filename] | <code>string</code> | <code>&quot;&#x27;sitemap&#x27;&quot;</code> | The file name to use for the generated file. |
+| [extension] | <code>string</code> | <code>&quot;&#x27;xml&#x27;&quot;</code> | The file extension to use for the generated file. |
+| [page_priority] | <code>string</code> | <code>&quot;&#x27;0.08&#x27;&quot;</code> | Sitemap default page priority. |
+| [xml_header] | <code>string</code> |  | Sitemap XML Header, standard XML sitemap header is the default. |
+| [xml_footer] | <code>string</code> |  | Sitemap XML Footer, standard XML sitemap closing tag is the default. |
+

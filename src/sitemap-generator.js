@@ -1,8 +1,26 @@
-let debug = () => {}; try { debug = require('debug')('Uttori.Plugin.Generator.Sitemap'); } catch {}
-const { FileUtility } = require('uttori-utilities');
+/** @type {Function} */
+let debug = () => {}; try { debug = require('debug')('Uttori.Plugin.SitemapGenerator'); } catch {}
+const fs = require('fs');
+const sanitize = require('sanitize-filename');
+
+/**
+ * @typedef SitemapGeneratorConfig
+ * @type {object}
+ * @property {object[]} urls A collection of Uttori documents.
+ * @property {RegExp[]} [url_filters] A collection of Regular Expression URL filters to exclude documents.
+ * @property {string} base_url The base URL (ie https://domain.tld) for all documents.
+ * @property {string} directory The path to the location you want the sitemap file to be written to.
+ * @property {string} [filename='sitemap'] The file name to use for the generated file.
+ * @property {string} [extension='xml'] The file extension to use for the generated file.
+ * @property {string} [page_priority='0.08'] Sitemap default page priority.
+ * @property {string} [xml_header] Sitemap XML Header, standard XML sitemap header is the default.
+ * @property {string} [xml_footer] Sitemap XML Footer, standard XML sitemap closing tag is the default.
+ */
 
 /**
  * Uttori Sitemap Generator
+ *
+ * Generates a valid sitemap.xml file for submitting to search engines.
  *
  * @example <caption>SitemapGenerator</caption>
  * const sitemap = SitemapGenerator.generate({ ... });
@@ -12,11 +30,11 @@ class SitemapGenerator {
   /**
    * The configuration key for plugin to look for in the provided configuration.
    *
+   * @static
    * @type {string}
    * @returns {string} The configuration key.
    * @example <caption>SitemapGenerator.configKey</caption>
    * const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
-   * @static
    */
   static get configKey() {
     return 'uttori-plugin-generator-sitemap';
@@ -25,55 +43,34 @@ class SitemapGenerator {
   /**
    * The default configuration.
    *
-   * @returns {object} The configuration.
+   * @static
+   * @returns {SitemapGeneratorConfig} The configuration.
    * @example <caption>SitemapGenerator.defaultConfig()</caption>
    * const config = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
-   * @static
    */
   static defaultConfig() {
     return {
-      // Sitemap URL (ie https://domain.tld)
-      base_url: '',
-
-      // Location where the XML sitemap will be written to.
-      directory: '',
-
-      // Sitemap URL Filter
-      url_filters: [],
-
-      // Sitemap XML Header
-      xml_header: '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">',
-
-      // Sitemap XML Footer
-      xml_footer: '</urlset>',
-
-      // Sitemap Filename
-      filename: 'sitemap',
-
-      // Sitemap Fie Extension
-      extension: 'xml',
-
-      // Sitemap default page priority
-      page_priority: '0.80',
-
-      // Sitemap URLs, must be an array.
       urls: [],
+      url_filters: [],
+      base_url: '',
+      directory: '',
+      filename: 'sitemap',
+      extension: 'xml',
+      page_priority: '0.80',
+      xml_header: '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">',
+      xml_footer: '</urlset>',
     };
   }
 
   /**
    * Validates the provided configuration for required entries.
    *
-   * @param {object} config - A configuration object.
-   * @param {object} config.configKey - A configuration object specifically for this plugin.
-   * @param {object[]} config.configKey.urls - A collection of Uttori documents.
-   * @param {RegExp[]} [config.configKey.url_filters] - A collection of Regular Expression URL filters.
-   * @param {string} config.configKey.base_url - The base URL (ie https://domain.tld) for all documents.
-   * @param {string} config.configKey.directory - The path to the location you want the sitemap file to be writtent to.
-   * @param {object} [_context] - A Uttori-like context (unused).
+   * @static
+   * @param {object} config A configuration object.
+   * @param {SitemapGeneratorConfig} config.configKey A configuration object specifically for this plugin.
+   * @param {object} [_context] A Uttori-like context (unused).
    * @example <caption>SitemapGenerator.validateConfig(config, _context)</caption>
    * SitemapGenerator.validateConfig({ ... });
-   * @static
    */
   static validateConfig(config, _context) {
     debug('Validating config...');
@@ -103,11 +100,11 @@ class SitemapGenerator {
   /**
    * Register the plugin with a provided set of events on a provided Hook system.
    *
-   * @param {object} context - A Uttori-like context.
-   * @param {object} context.hooks - An event system / hook system to use.
-   * @param {Function} context.hooks.on - An event registration function.
-   * @param {object} context.config - A provided configuration to use.
-   * @param {object} context.config.events - An object whose keys correspong to methods, and contents are events to listen for.
+   * @param {object} context A Uttori-like context.
+   * @param {object} context.hooks An event system / hook system to use.
+   * @param {Function} context.hooks.on An event registration function.
+   * @param {object} context.config A provided configuration to use.
+   * @param {object} context.config.events An object whose keys correspong to methods, and contents are events to listen for.
    * @example <caption>SitemapGenerator.register(context)</caption>
    * const context = {
    *   hooks: {
@@ -148,15 +145,15 @@ class SitemapGenerator {
   /**
    * Wrapper function for calling generating and writing the sitemap file.
    *
-   * @param {object} _document - A Uttori document (unused).
-   * @param {object} context - A Uttori-like context.
-   * @param {object} context.config - A provided configuration to use.
-   * @param {string} context.config.directory - The directory to write the sitemap to.
-   * @param {string} context.config.filename - The name to use for the generated file.
-   * @param {string} context.config.extension - The file extension to use for the generated file.
-   * @param {object} context.hooks - An event system / hook system to use.
-   * @param {Function} context.hooks.on - An event registration function.
-   * @param {Function} context.hooks.fetch - An event dispatch function that returns an array of results.
+   * @static
+   * @async
+   * @param {object} _document A Uttori document (unused).
+   * @param {object} context A Uttori-like context.
+   * @param {object} context.config A provided configuration to use.
+   * @param {SitemapGeneratorConfig} context.config.configKey - A configuration object specifically for this plugin.
+   * @param {object} context.hooks An event system / hook system to use.
+   * @param {Function} context.hooks.on An event registration function.
+   * @param {Function} context.hooks.fetch An event dispatch function that returns an array of results.
    * @returns {Promise} The provided document.
    * @example <caption>SitemapGenerator.callback(_document, context)</caption>
    * const context = {
@@ -170,34 +167,31 @@ class SitemapGenerator {
    *   },
    * };
    * SitemapGenerator.callback(null, context);
-   * @static
    */
   static async callback(_document, context) {
     debug('callback');
     const { directory, filename, extension } = { ...SitemapGenerator.defaultConfig(), ...context.config[SitemapGenerator.configKey] };
     const sitemap = await SitemapGenerator.generateSitemap(context);
     debug(`File: ${directory}/${filename}.${extension}`);
-    FileUtility.writeFileSync(directory, filename, extension, sitemap);
+
+    const target = `${directory}/${sanitize(`${filename}.${extension}`)}`;
+    try { fs.writeFileSync(target, sitemap, 'utf8'); } catch (error) {
+      /* istanbul ignore next */
+      debug('Error writing file:', target, sitemap, error);
+    }
     return _document;
   }
 
   /**
    * Generates a sitemap from the provided context.
    *
-   * @param {object} context - A Uttori-like context.
-   * @param {object} context.config - A provided configuration to use.
-   * @param {string} context.config.base_url - The prefix for URLs in the sitemap.
-   * @param {number} context.config.page_priority - The page_priority for pages.
-   * @param {RegExp[]} context.config.url_filters - A collection of URL filters used to filter documents.
-   * @param {object[]} context.config.urls - Additional documents to add to the sitemap.
-   * @param {string} context.config.urls.slug - The path for the current document.
-   * @param {string} context.config.urls.updateDate - The timestamp of the last update for the current document.
-   * @param {string} context.config.xml_footer - The suffix for the sitemap.
-   * @param {string} context.config.xml_header - The prefix for the sitemap.
-   * @param {object} context.config.events - An object whose keys correspong to methods, and contents are events to listen for.
-   * @param {object} context.hooks - An event system / hook system to use.
-   * @param {Function} context.hooks.on - An event registration function.
-   * @param {Function} context.hooks.fetch - An event dispatch function that returns an array of results.
+   * @param {object} context A Uttori-like context.
+   * @param {object} context.config A provided configuration to use.
+   * @param {SitemapGeneratorConfig} context.config.configKey A configuration object specifically for this plugin.
+   * @param {object} context.config.events An object whose keys correspong to methods, and contents are events to listen for.
+   * @param {object} context.hooks An event system / hook system to use.
+   * @param {Function} context.hooks.on An event registration function.
+   * @param {Function} context.hooks.fetch An event dispatch function that returns an array of results.
    * @returns {Promise} The generated sitemap.
    * @example <caption>SitemapGenerator.callback(_document, context)</caption>
    * const context = {
